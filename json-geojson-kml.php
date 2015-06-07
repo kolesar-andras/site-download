@@ -9,7 +9,7 @@
  *
  */
 
-$json = json_decode(file_get_contents('php://stdin'), true);
+$json = json_decode(file_get_contents('php://stdin'), true, 512, JSON_BIGINT_AS_STRING);
 $features = array();
 
 foreach ($json['elements'] as $element) {
@@ -17,6 +17,8 @@ foreach ($json['elements'] as $element) {
 	foreach ($element as $k => $v) {
 		if ($k == 'tags') {
 			$p = array_merge($p, $v);
+		} else if ($k == 'id') {
+			$p['[id]'] = (string) $v;
 		} else {
 			$p['['.$k.']'] = $v;
 		}
