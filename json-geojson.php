@@ -13,18 +13,19 @@ $json = json_decode(file_get_contents('php://stdin'), true);
 $features = array();
 
 foreach ($json['elements'] as $element) {
-	$element['tags']['id'] = $element['id'];
 	$features[] = array(
 		'type' => 'Feature',
 		'geometry' => array(
 			'type' => 'Point',
 			'coordinates' => array($element['lon'], $element['lat']),
 		),
-		'properties' => $element['tags'],
+		'properties' => $element,
 	);
 }
 
 echo json_encode(array(
 	'type' => 'FeatureCollection',
-	'features' => $features)
+	'features' => $features,
+    ),
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
 );
