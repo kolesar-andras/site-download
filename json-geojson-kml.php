@@ -22,6 +22,10 @@ foreach ($json['elements'] as $element) {
 		}
 	}
 	$p['name'] = $p['operator'];
+	unset($p['[lat]']);
+	unset($p['[lon]']);
+	unset($p['[uid]']);
+	unset($p['[type]']);
 	$features[] = array(
 		'type' => 'Feature',
 		'geometry' => array(
