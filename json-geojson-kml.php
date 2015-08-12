@@ -21,7 +21,16 @@ foreach ($json['elements'] as $element) {
 			$p['['.$k.']'] = $v;
 		}
 	}
-	$p['name'] = $p['operator'];
+
+	$name = null;
+	if ($p['man_made'] == 'water_tower') $name = 'víztorony';
+	if ($p['man_made'] == 'mast') $name = 'pózna';
+	if ($p['man_made'] == 'chimney') $name = 'kémény';
+	if ($p['tower:type'] == 'communication') $name = 'rádiótorony';
+	if (isset($p['communication:mobile_phone'])) $name = 'bázisállomás';
+	if (isset($p['operator'])) $name = $p['operator'];
+	if ($name !== null) $p['name'] = $name;
+
 	unset($p['[lat]']);
 	unset($p['[lon]']);
 	unset($p['[uid]']);
