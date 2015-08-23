@@ -1,0 +1,11 @@
+Header set Access-Control-Allow-Origin "*"
+
+<Files "*.kml">
+    ForceType application/vnd.google-earth.kml+xml
+    Header set Content-Disposition attachment
+</Files>
+
+<Files "*.txt">
+    ForceType application/octet-stream
+    Header set Content-Disposition attachment
+</Files>
