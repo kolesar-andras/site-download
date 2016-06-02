@@ -9,6 +9,6 @@ if [ $(wc -c < overpass.new.json) -ge 10000 ]; then
     cat overpass.json | ./json-geojson-kml.php > overpass-kml.geojson
     cat overpass.json | ./json-llama.php > Llama_Areas.txt
     cat overpass.json | ./json-clf.php > overpass.clf
-    cat overpass.json | ./json-cells.php | psql kolesar
+    cat overpass.json | ./json-cells.php | psql kolesar > /dev/null 2>&1
     ogr2ogr -F KML overpass.kml overpass-kml.geojson
 fi
