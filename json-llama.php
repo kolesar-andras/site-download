@@ -49,46 +49,37 @@ foreach ($json['elements'] as $element) {
 			$ops = explode(' ', $tags[$key]);
 			$mcc = $tags['MCC'];
 			$mncs = explode(';', $tags['MNC']);
-
-			if ($net == 'umts')
-				$rncs = explode(';', $tags['umts:RNC']);
-
-			if ($net == 'lte')
-				$eNBs = explode(';', $tags['lte:eNB']);
+			$rncs = explode('; ', @$tags['umts:RNC']);
+			$eNBs = explode('; ', @$tags['lte:eNB']);
 
 			if (count($ops) == count($mncs)) {
 				foreach ($mncs as $i => $mnc) {
 					$mnc = sprintf('%02d', trim($mnc));
 					$cidlist = $ops[$i];
 					$cids = explode(';', $cidlist);
-					foreach ($cids as $cid) {
-						$cid = trim($cid);
-						if ($cid === '') continue;
-						if (!is_numeric($cid)) continue;
+					foreach (explode(';', $eNBs[$i]) as $eNB) {
+						foreach ($cids as $cid) {
+							$cid = trim($cid);
+							if ($cid === '') continue;
+							if (!is_numeric($cid)) continue;
 
-						$site = (int) floor($cid/10);
+							$site = (int) floor($cid/10);
 
-						if ($net == 'umts') {
-							$rnc = $rncs[$i];
-							if (!is_numeric($rnc)) continue;
-							$cid += $rnc*65536;
+							if ($net == 'umts') {
+								$rnc = $rncs[$i];
+								if (!is_numeric($rnc)) continue;
+								$cid += $rnc*65536;
+							}
+
+							if ($net == 'lte') {
+								$site = $eNB;
+								if (!is_numeric($eNB)) continue;
+								$cid += $eNB*256;
+							}
+
+							$cells[] = sprintf('%d:%d:%d',
+								$cid, $mcc, $mnc);
 						}
-
-						if ($net == 'lte') {
-							$eNB = $eNBs[$i];
-							$site = $eNB;
-							if (!is_numeric($eNB)) continue;
-							$cid += $eNB*256;
-						}
-
-						if ($mnc == 30 && $net != 'lte') // TODO
-							$site = null;
-
-						if ($site !== null)
-							$siteids[$mcc][$mnc][$site] = $id;
-
-						$cells[] = sprintf('%d:%d:%d',
-							$cid, $mcc, $mnc);
 					}
 				}
 			}
