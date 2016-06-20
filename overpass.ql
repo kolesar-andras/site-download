@@ -23,5 +23,5 @@ node
   ["communication:mobile_phone"!="no"]
   (area:3600021335);
 )->.nodes;
-(.nodes; rel(bn.nodes)["type"="link"]["link"="microwave"];);
+(.nodes; rel(bn.nodes)["type"="link"]["link"="microwave"]; >;);
 out meta;
