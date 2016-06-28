@@ -51,6 +51,7 @@ foreach ($json['elements'] as $element) {
 			$mncs = explode(';', $tags['MNC']);
 			$rncs = explode('; ', @$tags['umts:RNC']);
 			$eNBs = explode('; ', @$tags['lte:eNB']);
+			$lacs = explode('; ', @$tags[$net . ':LAC']);
 
 			if (count($ops) == count($mncs)) {
 				foreach ($mncs as $i => $mnc) {
@@ -79,6 +80,13 @@ foreach ($json['elements'] as $element) {
 
 							$cells[] = sprintf('%d:%d:%d',
 								$cid, $mcc, $mnc);
+
+							if ($net == 'lte' &&
+								in_array($mnc, array('01', '30')) &&
+								hasSharedLac($mnc, $lacs[$i])) {
+								$cells[] = sprintf('%d:%d:%d',
+									$cid, $mcc, $mnc == '01' ? '30' : '01');
+							}
 						}
 					}
 				}
@@ -92,3 +100,10 @@ foreach ($json['elements'] as $element) {
 
 }
 
+function hasSharedLac($mnc, $lac) {
+	$lacs = explode(';', $lac);
+	foreach ($lacs as $lac)
+		if ($mnc == '01' && $lac >= 20000 && $lac <= 29999) return true;
+		if ($mnc == '30' && $lac >= 30000 && $lac <= 39999) return true;
+	return false;
+}
