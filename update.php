@@ -6,6 +6,8 @@ $data['old'] = fileinfo($file);
 shell_exec('./download.sh');
 clearstatcache();
 $data['new'] = fileinfo($file);
+if (is_file('overpass.new.json'))
+    $data['warning'] = 'overpass returned empty dataset';
 
 header('Content-type: text/plain; charset=utf-8');
 echo json_encode($data, JSON_PRETTY_PRINT);
