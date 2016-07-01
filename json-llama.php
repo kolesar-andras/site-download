@@ -27,7 +27,7 @@ foreach ($json['elements'] as $element) {
 
 	$tags = $element['tags'];
 	$cells = [];
-	
+
 	$name = $element['id'];
 	if (@$tags['location'] == 'roof') $name = 'háztetőn';
 	if (@$tags['location'] == 'pole') $name = 'oszlopon';
@@ -48,24 +48,46 @@ foreach ($json['elements'] as $element) {
 
 			$ops = explode(' ', $tags[$key]);
 			$mcc = $tags['MCC'];
-			$mncs =  explode(';', $tags['MNC']);
+			$mncs = explode(';', $tags['MNC']);
+
+			if ($net == 'umts')
+				$rncs = explode(';', $tags['umts:RNC']);
+
+			if ($net == 'lte')
+				$eNBs = explode(';', $tags['lte:eNB']);
+
 			if (count($ops) == count($mncs)) {
 				foreach ($mncs as $i => $mnc) {
 					$mnc = sprintf('%02d', trim($mnc));
 					$cidlist = $ops[$i];
 					$cids = explode(';', $cidlist);
-					if ($net != 'gsm') {
-						$rnckey = $key = $net . ':RNC';
-						if (!isset($tags[$rnckey])) continue;
-						$rncops = explode(' ', $tags[$rnckey]);
-						if (!isset($rncops[$i])) continue;
-						$rnc = $rncops[$i];
-					}
 					foreach ($cids as $cid) {
 						$cid = trim($cid);
-						if ($cid == '') continue;
-						if ($net != 'gsm') $cid += 65536*$rnc;
-						$cells[] = sprintf('%d:%d:%d', 
+						if ($cid === '') continue;
+						if (!is_numeric($cid)) continue;
+
+						$site = (int) floor($cid/10);
+
+						if ($net == 'umts') {
+							$rnc = $rncs[$i];
+							if (!is_numeric($rnc)) continue;
+							$cid += $rnc*65536;
+						}
+
+						if ($net == 'lte') {
+							$eNB = $eNBs[$i];
+							$site = $eNB;
+							if (!is_numeric($eNB)) continue;
+							$cid += $eNB*256;
+						}
+
+						if ($mnc == 30 && $net != 'lte') // TODO
+							$site = null;
+
+						if ($site !== null)
+							$siteids[$mcc][$mnc][$site] = $id;
+
+						$cells[] = sprintf('%d:%d:%d',
 							$cid, $mcc, $mnc);
 					}
 				}
