@@ -58,7 +58,7 @@ foreach ($json['elements'] as $element) {
 					$mnc = sprintf('%02d', trim($mnc));
 					$cidlist = $ops[$i];
 					$cids = explode(';', $cidlist);
-					foreach (explode(';', $eNBs[$i]) as $eNB) {
+					if (isset($eNBs[$i])) foreach (explode(';', $eNBs[$i]) as $eNB) {
 						foreach ($cids as $cid) {
 							$cid = trim($cid);
 							if ($cid === '') continue;

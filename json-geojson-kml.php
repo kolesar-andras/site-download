@@ -25,10 +25,10 @@ foreach ($json['elements'] as $element) {
 	}
 
 	$name = null;
-	if ($p['man_made'] == 'water_tower') $name = 'víztorony';
-	if ($p['man_made'] == 'mast') $name = 'pózna';
-	if ($p['man_made'] == 'chimney') $name = 'kémény';
-	if ($p['tower:type'] == 'communication') $name = 'rádiótorony';
+	if (@$p['man_made'] == 'water_tower') $name = 'víztorony';
+	if (@$p['man_made'] == 'mast') $name = 'pózna';
+	if (@$p['man_made'] == 'chimney') $name = 'kémény';
+	if (@$p['tower:type'] == 'communication') $name = 'rádiótorony';
 	if (isset($p['communication:mobile_phone'])) $name = 'bázisállomás';
 	if (isset($p['operator'])) $name = $p['operator'];
 	if ($name !== null) $p['name'] = $name;
@@ -37,6 +37,8 @@ foreach ($json['elements'] as $element) {
 	unset($p['[lon]']);
 	unset($p['[uid]']);
 	unset($p['[type]']);
+
+	if (!isset($element['lon']) || !isset($element['lat'])) continue;
 	$features[] = array(
 		'type' => 'Feature',
 		'geometry' => array(

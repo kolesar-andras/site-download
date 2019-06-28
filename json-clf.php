@@ -47,13 +47,13 @@ foreach ($json['elements'] as $element) {
 			isset($tags['MNC'])) {
 
 			$ops = explode(' ', $tags[$key]);
-			$mcc = $tags['MCC'];
-			$mncs = explode(';', $tags['MNC']);
-			$lacs = explode(';', $tags[$net . ':LAC']);
+			$mcc = @$tags['MCC'];
+			$mncs = explode(';', @$tags['MNC']);
+			$lacs = explode(';', @$tags[$net . ':LAC']);
 			if (count($ops) == count($mncs)) {
 				foreach ($mncs as $i => $mnc) {
 					$mnc = sprintf('%02d', trim($mnc));
-					$lac = trim($lacs[$i]);
+					$lac = trim(@$lacs[$i]);
 					$cidlist = $ops[$i];
 					$cids = explode(';', $cidlist);
 					if ($net != 'gsm') {
@@ -62,6 +62,8 @@ foreach ($json['elements'] as $element) {
 						$rncops = explode(' ', $tags[$rnckey]);
 						if (!isset($rncops[$i])) continue;
 						$rnc = $rncops[$i];
+					} else {
+						$rnc = null;
 					}
 					foreach ($cids as $cid) {
 						$cid = trim($cid);
