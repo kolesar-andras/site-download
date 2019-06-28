@@ -3,9 +3,27 @@ Header set Access-Control-Allow-Origin "*"
 <Files "*.kml">
     ForceType application/vnd.google-earth.kml+xml
     Header set Content-Disposition attachment
+    Header set Content-Type application/vnd.google-earth.kml+xml
+</Files>
+
+<Files "*.geojson">
+    ForceType application/vnd.geo+json
+    Header set Content-Disposition attachment
+    Header set Content-Type application/vnd.geo+json
+</Files>
+
+<Files "*.json">
+    ForceType application/json
+    Header set Content-Disposition attachment
+    Header set Content-Type application/json
 </Files>
 
 <Files "*.txt">
+    ForceType application/octet-stream
+    Header set Content-Disposition attachment
+</Files>
+
+<Files "*.clf">
     ForceType application/octet-stream
     Header set Content-Disposition attachment
 </Files>
